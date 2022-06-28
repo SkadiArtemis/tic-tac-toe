@@ -36,7 +36,7 @@ class Ship:
             cur_y = self.bow.y
             if self.o == 0:
                 cur_x += i
-            else self.o == 1:
+            elif self.o == 1:
                 cur_y += i
             ship_dots.append(Dot(cur_x, cur_y))
         return shot in self.dots
@@ -46,10 +46,59 @@ class Board:
         self.size = size
         self.hid = hid
         self.count = 0
-        self.field = [ ["0"]8size for _ in range(size) ]
+        self.field = [ ["0"]*size for _ in range(size) ]
         self.busy = []
         self.ships = []
     def add_ship(self, ship):
         for d in ship.dots:
             if self.out(d) or d in self.bysy:
-                raise
+                raise BoardWorngShipException()
+        for d in ship.dots:
+            self.field[d.x][d.y] = "■"
+            self.busy.append(d)
+            self.ships.append(ship)
+            self.contour(ship)
+    def contour(self, ship, verb = False):
+        near = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1), (0, 0), (0, 1),
+            (1, -1), (1, 0), (1,1)
+        ]
+        for d in ship.dots:
+            for dx, dy in near:
+                cur = Dot(d.x + dx, d.y + dy)
+                if not(self.out(cur)) and cur not in self.busy:
+                    if verb:
+                        self.field[cur.x][cur.y] = "."
+                    self.busy.append(cur)
+    def __str__(self):
+        res = ""
+        res += " | 1 | 2 | 3 | 4 | 5 | 6 |"
+        for i, row in enumerate(self.field):
+            res += f"\n{i+1} | " + " | ".join(row) + " |"
+        if self.hid:
+            res = res.replace("■","0")
+            return res
+    def out(self,d):
+        return not((0 <= d.x < self.size) and (0 <= d.y < self.size))
+    def shot(self, d):
+        if self.out(d):
+            raise BoardOutException()
+        if d in self.busy:
+            raise BoardUsedException()
+        self.busy.append(d)
+        for ship in self.ships:
+            if d in ship.dots:
+                ship.lives -= 1
+                self.field[d.x][d.y] = "X"
+                if ship.lives == 0
+                    self.count += 1
+                    self.coutour(ship, verb = True)
+                    print("Убит!")
+                    return False
+                else:
+                    print("Ранен!")
+                    return True
+        self.field[d.x][d.y] = "."
+        print("Мимо!")
+        return True
