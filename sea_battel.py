@@ -1,4 +1,6 @@
 from random import randint
+
+
 class Dot:
     def __init__(self, x, y):
         self.x = x
@@ -63,7 +65,7 @@ class Board:
         near = [
             (-1, -1), (-1, 0), (-1, 1),
             (0, -1), (0, 0), (0, 1),
-            (1, -1), (1, 0), (1,1)
+            (1, -1), (1, 0), (1, 1)
         ]
         for d in ship.dots:
             for dx, dy in near:
@@ -144,14 +146,15 @@ class User(Player):
             x, y = int(x), int(y)
             return Dot(x-1, y-1)
 
+
 class Game:
-    def __init__(self, size = 6):
+    def __init__(self, size=6):
         self.size = size
         pl = self.random_board()
         co = self.random_board()
         co.hid = True
         self.ai = AI(co, pl)
-        self.us = User(co, pl)
+        self.us = User(pl, co)
     def random_board(self):
         board = None
         while board is None:
@@ -159,7 +162,7 @@ class Game:
         return board
     def random_place(self):
         lens = [3, 2, 2, 1, 1, 1, 1]
-        board = Board(size = self.size)
+        board = Board(size=self.size)
         attempts = 0
         for l in lens:
             while True:
