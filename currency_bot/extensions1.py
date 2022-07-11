@@ -7,7 +7,7 @@ class APIException(Exception):
 
 class CurrencyConverter:
     @staticmethod
-    def convert(self, base: str, sym: str, amount: str):
+    def convert(base: str, sym: str, amount: str):
         if base == sym:
             raise APIException(f"Невозможно конвертировать одинаковые валюты {base}.")
 
