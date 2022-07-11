@@ -17,11 +17,16 @@ class CurrencyConverter:
             raise APIException(f"Не удалось обработать валюту {base}.")
 
         try:
+            sym_ticker = exchanges[sym]
+        except KeyError:
+            raise APIException(f"Не удалось обработать валюту {sym}.")
+
+        try:
             amount = float(amount)
         except:
             raise APIException(f"Не удалось обработать количество {amount}.")
 
-        r = requests.get(f"https://api.exchangeratesapi.io/latest?base={base_ticker}&symbols={base_ticker}")
+        r = requests.get(f"https://api.exchangeratesapi.io/latest?base={base_ticker}&symbols={sym_ticker}")
         total_base = json.loads(r.content)[exchanges[base]]
 
         return total_base
