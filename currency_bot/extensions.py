@@ -5,6 +5,7 @@ from config import exchanges
 class APIException(Exception):
     pass
 
+class Convertor:
     @staticmethod
     def get_price(base, sym, amount):
         try:
