@@ -1,5 +1,5 @@
-import json
 import requests
+import json
 from config import exchanges
 
 class APIException(Exception):
@@ -7,8 +7,8 @@ class APIException(Exception):
 
 class CurrencyConverter:
     @staticmethod
-    def convert(base: str, sym: str, amount: str):
-        if base == sym:
+    def get_price(base: str, quote: str, amount: int):
+        if base == quote:
             raise APIException(f"Невозможно конвертировать одинаковые валюты {base}.")
 
         try:
@@ -17,16 +17,21 @@ class CurrencyConverter:
             raise APIException(f"Не удалось обработать валюту {base}.")
 
         try:
-            sym_ticker = exchanges[sym]
+            quote_ticker = exchanges[quote]
         except KeyError:
-            raise APIException(f"Не удалось обработать валюту {sym}.")
+            raise APIException(f"Не удалось обработать валюту {quote}.")
 
         try:
             amount = float(amount)
         except:
             raise APIException(f"Не удалось обработать количество {amount}.")
 
-        r = requests.get(f"https://api.exchangeratesapi.io/latest?base={base_ticker}&symbols={sym_ticker}")
-        total_base = json.loads(r.content)[exchanges[base]]
+        r = requests.get(f"https://min-api.cryptocompare.com/data/price?fsym={base_ticker}&tsyms={quote_ticker}")
+        total_base = json.loads(r.content)[exchanges[quote]]*float(amount)
+        print(total_base)
+
 
         return total_base
+
+
+
