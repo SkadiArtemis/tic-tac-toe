@@ -26,6 +26,9 @@ class Staff(models.Model):
     position = models.CharField(max_length=2, choices=POSITIONS, default=cashier)
     labor_contract = models.IntegerField()
 
+    def get_last_name(self):
+        return self.full_name.split()[0]
+
 
 class Order(models.Model):
     time_in = models.DateTimeField(auto_now_add=True)
@@ -37,10 +40,27 @@ class Order(models.Model):
 
     products = models.ManyToManyField(Product, through='ProductOrder')
 
+    def get_duration(self):
+        if self.complete:
+            return (self.time_out - self.time_in).total_seconds() // 60
+        else:
+            return (datetime.now() - self.time_in).total_seconds() // 60
+
 
 class ProductOrder(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     amount = models.IntegerField(default=1)
 
+    def product_sum(self):
+        product_price = self.product.price
+        return product_price * self.amount
 
+    @property
+    def amount(self):
+        return self._amount
+
+    @amount.setter
+    def amount(self, value):
+        self._amount = int(value) if value >= 0 else 0
+        self.save()
