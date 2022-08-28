@@ -1,0 +1,32 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+<h2>Новости</h2>
+{% endblock title %}
+
+
+{% block content %}
+    <h1>Список новостей ({{ news_count }})</h1>
+    <hr>
+    {% if newslist %}
+        <table>
+            <tr>
+                <td>Заголовок</td>
+                <td>Дата публикации</td>
+                <td>Текст</td>
+            </tr>
+            {% for post in newslist %}
+            <tr>
+                <td><a href="{% url 'news_detail' post.pk %}">{{ post.post_header }}</a></td>
+                <td>{{ post.input_date_time|date:'d.m.Y H:i' }}</td>
+                <td align="left">{{ post.post_body|censor|preview }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+
+{% endblock content %}
