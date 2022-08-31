@@ -36,9 +36,10 @@ class Post(models.Model):
     categoryType = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=ARTICLE)
     dateCreation = models.DateTimeField(auto_now_add=True)
     postCategory = models.ManyToManyField(Category, through='PostCategory')
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=128, unique=True)
     text = models.TextField()
     rating = models.SmallIntegerField(default=0)
+    added_at = models.DateTimeField(auto_now=True)
 
     def like(self):
         self.rating += 1
